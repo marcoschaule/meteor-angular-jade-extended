@@ -14,7 +14,7 @@ var objDependencies = {
 
 Package.describe({
     name          : 'marcstark:meteor-angular-jade-extended',
-    version       : '1.0.0-beta',
+    version       : '1.0.1-beta',
     summary       : 'Extended handler for Jade in Meteor-Angular projects.',
     git           : 'https://github.com/marcstark/meteor-angular-jade-extended.git',
     documentation : 'README.md'

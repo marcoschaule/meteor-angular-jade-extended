@@ -1,6 +1,8 @@
 Jade for Angular-Meteor
 =======================
 
+[![Meteor Icon](http://icon.meteor.com/package/marcstark:meteor-angular-jade-extended)](https://atmospherejs.com/marcstark/meteor-angular-jade-extended)
+
 This [Meteor](https://www.meteor.com/) package provides some support for the
 [Jade](http://jade-lang.com/) template engine in an Meteor-Angular environment.
 
