@@ -35,8 +35,8 @@ if (Meteor.isServer) {
         // number of parsed items
         objTest.length(objFileValid.arrHtml, 2,
             'Length of parts added to HTML should be 2.');
-        objTest.length(objFileValid.arrJavaScript, 2,
-            'Length of parts added to JavaScript should be 2.');
+        objTest.length(objFileValid.arrJavaScript, 3,
+            'Length of parts added to JavaScript should be 3.');
     });
 
     // *****************************************************************************

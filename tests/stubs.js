@@ -110,6 +110,7 @@ function _stubFileObject(strMockFileName) {
     objFile.getDirname          = function() { return this.strDirname; };
     objFile.getPathInPackage    = function() { return this.strPathInPackage; };
     objFile.getContentsAsString = function() { return this.strContent; };
+    objFile.getArch             = function() { return 'web.browser'; };
 
     // final function to add HTML to result
     objFile.addHtml = function(objHtml) {
