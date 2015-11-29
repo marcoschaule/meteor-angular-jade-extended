@@ -1,0 +1,15 @@
+//- invalid since body has parent
+div(class="head-invalid")
+    head(class="should-not-be-here")
+
+//- invalid since body has parent
+div(class="body-invalid")
+    body(class="should-not-be-here")
+
+//- invalid since template has parent
+div(class="template-invalid")
+    template(name="invalid-template")
+
+//- invalid since script has parent
+div(class="script-invalid")
+    script(type="text/ng-template", id="invalid-template")
