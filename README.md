@@ -30,7 +30,7 @@ Table of contents
     * [Using files ending on ```.ng.jade```](#using-files-ending-on-ngjade)
     * [Including files that end on ```.include.jade```](#including-files-that-end-on-includejade)
     * [Referring to the templates in Angular](#referring-to-the-templates-in-angular)
-    * [Body Attributes](#body-attribtues)
+    * [Body Attributes](#body-attributes)
 * [Todo](#todo)
 
 
