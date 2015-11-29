@@ -74,8 +74,7 @@ Plugin.registerCompiler({
         extensions: [__strMatchJade],
     }, function createCompiler() {
     
-    var objCompiler = new AngularJadeCompiler();
-    return objCompiler;
+    return (new AngularJadeCompiler());
 });
 
 // *****************************************************************************
@@ -111,39 +110,34 @@ AngularJadeCompiler.prototype.processFilesForTarget = function(arrFiles) {
  * @private
  * 
  * Helper function to handle each file separately.
- * 
- * @param  {Object} objFile  object of single file to be handled
+ *
+ * @return {Function}  function handler to handle the file object
  */
-function _handleFile(objFile) {
+function _handleFile() {
     var that = this;
 
     return function(objFile) {
-        var strFileName,
-            strFilePath,
-            strFileContent,
-            strContentCompiled,
-            strContentMinified,
-            objContentMinified,
-            objHead,
-            strHead,
-            objBody,
-            strBody,
-            objTemplates,
-            objScripts;
+        var strFileName;
+        var strFilePath;
+        var strFileContent;
+        var strContentCompiled;
+        var strContentMinified;
+        var objContentMinified;
+        var objHead;
+        var strHead;
+        var objBody;
+        var strBody;
+        var strBodyClasses;
+        var objBodyAttrsRest;
+        var objTemplates;
+        var objScripts;
         
         // get file name and content and compile it
         strFileName    = objFile.getBasename();
         strFileContent = objFile.getContentsAsString().toString('utf8');
 
-        // try to compile Jade
-        try {
-            strContentCompiled = _compileJade.call(that, strFileContent, strFileName);
-        } catch(err) {
-            throw({
-                message: err,
-                sourcePath: objFile.getBasename()
-            });
-        }
+        // compile Jade
+        strContentCompiled = _compileJade.call(that, strFileContent, strFileName);
 
         // if file ends on "include.jade"
         if (_isFileOfType(strFileName, __strMatchIncludeJade)) {
@@ -182,7 +176,17 @@ function _handleFile(objFile) {
         strBody = objBody && objBody[0] && !objBody[0].parent &&
                 'function' === typeof objBody.html &&
                 _minifyHtml.call(that, objBody.html());
-        
+        strBodyClasses = objBody &&
+                'function' === typeof objBody.attr &&
+                objBody.attr('class');
+        objBodyAttrsRest = objBody && objBody[0] &&
+                objBody[0].attribs;
+
+        // remove "class" attribute
+        if (objBodyAttrsRest && objBodyAttrsRest.class) {
+            delete objBodyAttrsRest.class;
+        }
+
         // handle each template and script separately
         var _templateHandler = _handleTemplate.call(that, objFile);
         objTemplates.each(_templateHandler);
@@ -190,8 +194,10 @@ function _handleFile(objFile) {
 
         // otherwise add head and body to layout separately
         objContentMinified = {
-            strHead: strHead,
-            strBody: strBody,
+            strHead          : strHead,
+            strBody          : strBody,
+            strBodyClasses   : strBodyClasses,
+            objBodyAttrsRest: objBodyAttrsRest,
         };
 
         return _addHtmlToLayout.call(that, objFile, objContentMinified);
@@ -371,12 +377,30 @@ function _addHtmlToAngularTemplateCache(objFile, strContentMinified, strTemplate
  * 
  * Helper function to add the final HTML to the file object.
  * 
- * @param {Object}  objFile                     object of file the HTML will be added to
- * @param {Object}  objContentMinified          object of compiled and minified content
- * @param {String}  objContentMinified.strHead  string of the compiled and minified HTML head
- * @param {String}  objContentMinified.strBody  string of the compiled and minified HTML body
+ * @param {Object} objFile                              object of file the HTML will be added to
+ * @param {Object} objContentMinified                   object of compiled and minified content
+ * @param {String} objContentMinified.strHead           string of the compiled and minified HTML head
+ * @param {String} objContentMinified.strBody           string of the compiled and minified HTML body
+ * @param {String} objContentMinified.strBodyClasses    string of the body's class attribute
+ * @param {String} objContentMinified.objBodyAttrsRest  string of the body's attributes other than "class"
  */
 function _addHtmlToLayout(objFile, objContentMinified) {
+    var strFilePath, strJavaScript = '';
+
+    // if "jade" files are not in web targets, aboard
+    if (objFile.getArch().indexOf('web.browser') < 0) {
+            console.log('\n');
+            console.log('WARNING from package "marcstark:meteor-angular-jade-extended":' + '\n');
+            console.log([
+                    'Document sections can only be emitted to web targets. ',
+                    'This error appears if you use ".jade" files outside ',
+                    'of the web target arch. ',
+                    'To avoid this, move all ".jade" files into the "client" ',
+                    'folder or corresponding sub-folders.'
+                ].join('') + '\n');
+            return;
+        }
+
     if (objContentMinified.strHead) {
         objFile.addHtml({
             section : 'head',
@@ -388,6 +412,30 @@ function _addHtmlToLayout(objFile, objContentMinified) {
         objFile.addHtml({
             section : 'body',
             data    : objContentMinified.strBody,
+        });
+    }
+
+    if (objContentMinified.strBody && objContentMinified.strBodyClasses) {
+        strJavaScript += [
+            "$('body').addClass('", objContentMinified.strBodyClasses , "');"
+        ].join('');
+    }
+
+    if (objContentMinified.strBody && objContentMinified.objBodyAttrsRest) {
+        strJavaScript += [
+            "$('body').attr(", JSON.stringify(objContentMinified.objBodyAttrsRest) , ");",
+        ].join('');
+    }
+
+    if (objContentMinified.strBody && (objContentMinified.strBodyClasses || objContentMinified.objBodyAttrsRest)) {
+        strFilePath   = objFile.getPathInPackage();
+        strFilePath   = strFilePath.replace(/\\/g, '/'); // replace back slashes (if necessary)
+        strFilePath   = strFilePath.replace(__strMatchNgJade, 'html');
+        strJavaScript = ["Meteor.startup(function() { ", strJavaScript, " });"].join('');
+
+        objFile.addJavaScript({
+            path: strFilePath,
+            data: strJavaScript,
         });
     }
 }

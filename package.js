@@ -27,23 +27,23 @@ Npm.depends(objDependencies);
 // *****************************************************************************
 
 Package.registerBuildPlugin({
-    name                : 'marcstark:meteor-angular-jade-extended',
-    use                 : [],
-    sources             : ['plugin/plugin.js'],
-    npmDependencies     : objDependencies,
+    name            : 'marcstark:meteor-angular-jade-extended',
+    use             : [],
+    sources         : ['plugin/plugin.js'],
+    npmDependencies : objDependencies,
 });
 
 // *****************************************************************************
 
 Package.onUse(function(api) {
-    api.versionsFrom('1.2');
+    api.versionsFrom('METEOR@1.2.0.1');
     api.use('isobuild:compiler-plugin@1.0.0');
 });
 
 // *****************************************************************************
 
 Package.onTest(function(api) {
-    api.use(['tinytest', 'standard-minifiers'], 'server');
+    api.use(['tinytest'], 'server');
     api.addAssets(['tests/mocks/jade-valid.jade'], 'server');
     api.addAssets(['tests/mocks/jade-valid.ng.jade'], 'server');
     api.addAssets(['tests/mocks/jade-valid.include.jade'], 'server');

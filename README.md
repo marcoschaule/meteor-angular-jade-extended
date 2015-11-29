@@ -30,6 +30,7 @@ Table of contents
     * [Using files ending on ```.ng.jade```](#using-files-ending-on-ngjade)
     * [Including files that end on ```.include.jade```](#including-files-that-end-on-includejade)
     * [Referring to the templates in Angular](#referring-to-the-templates-in-angular)
+    * [Body Attributes](#body-attribtues)
 * [Todo](#todo)
 
 
@@ -177,7 +178,67 @@ Both versions are supported.
 }
 ```
 
+### Body Attributes
 
+If you have attributes in your ```body``` tag, they will be added to the
+main layout's ```body``` tag in the following way:
+
+* All ```class``` attributes are combined to one class attribute.
+    
+    The files
+
+    ``` Jade
+    //- file1.jade
+    body(class="file1")
+        div(class="div-something1")
+    ```
+    
+    and
+
+    ``` Jade
+    //- file2.jade
+    body(class="file2")
+        div(class="div-something2")
+    ```
+
+    will be combined to:
+
+    ``` html
+    <body class="file1 file2">
+        <div class="somthing1"></div>
+        <div class="somthing2"></div>
+    </body>
+    ```
+
+* All other attributes are added to the body tag, at which already existing
+    attributes are overridden by new ones with the same name. Attributes with
+    prefixes like ```data-``` are still threaten as individual attributes. This
+    may change in a later version.
+
+    The files
+
+    ``` Jade
+    //- file1.jade
+    body(ng-app="myApp", ng-cloak)
+        div(class="div-something1")
+    ```
+    
+    and
+
+    ``` Jade
+    //- file2.jade
+    body(ng-app="myOtherApp", data-ng-cloak)
+        div(class="div-something2")
+    ```
+
+    will be combined to:
+
+    ``` html
+    <body ng-app="myOtherApp" ng-cloak="ng-cloak" data-ng-cloak="data-ng-cloak">
+        <div class="somthing1"></div>
+        <div class="somthing2"></div>
+    </body>
+    ```
 
 Todo
 ----
@@ -195,3 +256,6 @@ Todo
     ```
 * Find a better way to integrate the Meteor parser to ```tinytest```
     in the tests of the package.
+* Write tests for body attribtues.
+* Implement code coverage and build tags.
+* Implement ```standard-minifiers``` instead of ```html-minifiers``` package.
