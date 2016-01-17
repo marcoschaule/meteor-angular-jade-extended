@@ -54,6 +54,7 @@ var __strMatchJade = 'jade';
  * @type {Object}
  */
 var __objJadeOptions = {
+    basedir      : process.env.PWD,
     pretty       : true,
     compileDebug : false,
     filename     : path.join(process.env.PWD, 'index')

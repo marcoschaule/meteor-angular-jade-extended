@@ -137,13 +137,19 @@ mixin myMixin(strSomething)
 ``` Jade
 //- client/components/something/my-template.jade
 
-//- include the file
-include client/lib/mixins/my-mixins.include.jade
+//- include the file with a leading "/"
+include /client/lib/mixins/my-mixins.include.jade
 
 //- use a mixin
 div
     +myMixin('something')
 ```
+
+**Note:** I strongly recommend using a leading "/" to use absolute paths.
+Absolute paths always have use the path in which you started your meteor app
+as base path. This _could_ lead to problems in bundled applications and needs to
+be tested. Also, I implemented the "filename" jade option to offer relative
+paths, which sadly won't work in nested includes.
 
 ### Referring to the templates in Angular
 
@@ -243,7 +249,6 @@ main layout's ```body``` tag in the following way:
 Todo
 ----
 
-* Implement base path as an option to support nested includes.
 * Implement error handling for files with ".ng.jade" not being in the client.
 * Find out about possible negative consequences of saving the template HTML
     in an Angular constant and assigning this constant to the template cache
@@ -261,3 +266,6 @@ Todo
 * Write tests for body attribtues.
 * Implement code coverage and build tags.
 * Implement ```standard-minifiers``` instead of ```html-minifiers``` package.
+* Test the use of absolute paths in a bundled application.
+
+
