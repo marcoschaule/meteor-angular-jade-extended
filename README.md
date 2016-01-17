@@ -243,6 +243,8 @@ main layout's ```body``` tag in the following way:
 Todo
 ----
 
+* Implement base path as an option to support nested includes.
+* Implement error handling for files with ".ng.jade" not being in the client.
 * Find out about possible negative consequences of saving the template HTML
     in an Angular constant and assigning this constant to the template cache
     in order to keep each template in memory only once. Does this work? Does

@@ -21,9 +21,9 @@ html-tools@1.0.5
 htmljs@1.0.5
 id-map@1.0.4
 jquery@1.11.4
-local-test:marcstark:meteor-angular-jade-extended@1.0.1-beta
+local-test:marcstark:meteor-angular-jade-extended@1.0.1
 logging@1.0.8
-marcstark:meteor-angular-jade-extended@1.0.1-beta
+marcstark:meteor-angular-jade-extended@1.0.1
 meteor@1.1.10
 minimongo@1.0.10
 mongo@1.1.3
